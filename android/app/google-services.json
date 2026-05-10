@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "634260015593",
+    "project_id": "agenda-eventos-d32e8",
+    "storage_bucket": "agenda-eventos-d32e8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634260015593:android:e26f2c7c0d09f95b58a378",
+        "android_client_info": {
+          "package_name": "com.example.agenda_gg_hf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4yFnb0V0nz-j2-ihHmanTFGsUl2vmVXU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
