@@ -24,6 +24,10 @@ class _HomeScreenState extends State<HomeScreen> {
   bool mostrarCalendario = false;
   bool mostrarFormulario = false;
 
+  final Color primaryColor = const Color(0xFF1F2937);
+  final Color accentColor = const Color(0xFF374151);
+  final Color backgroundColor = const Color(0xFFF5F5F5);
+
   @override
   void initState() {
     super.initState();
@@ -95,9 +99,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final eventosProvider = context.watch<EventosProvider>();
 
     return Scaffold(
+      backgroundColor: backgroundColor,
+
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+
         title: SizedBox(
-          height: 45,
+          height: 48,
           child: Image.asset(
             empresaProvider.empresaActual == 'golden'
                 ? 'assets/GoldenGardenDarckTheme.png'
@@ -108,13 +118,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 12),
 
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+            child: IconButton(
+              style: IconButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
               ),
 
               onPressed: () {
@@ -124,12 +133,8 @@ class _HomeScreenState extends State<HomeScreen> {
               },
 
               icon: Icon(
-                mostrarFormulario
-                    ? Icons.visibility_off
-                    : Icons.event_available,
+                mostrarFormulario ? Icons.close_rounded : Icons.add_rounded,
               ),
-
-              label: Text(mostrarFormulario ? 'Ocultar' : 'Nuevo Evento'),
             ),
           ),
         ],
@@ -140,126 +145,354 @@ class _HomeScreenState extends State<HomeScreen> {
 
         child: Column(
           children: [
-            /// EMPRESAS
-            DropdownButton<String>(
-              value: empresaProvider.empresaActual,
+            /// SELECT EMPRESA
+            Container(
+              width: double.infinity,
 
-              isExpanded: true,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
 
-              items: const [
-                DropdownMenuItem(value: 'golden', child: Text('Golden Garden')),
+              decoration: BoxDecoration(
+                color: Colors.white,
 
-                DropdownMenuItem(value: 'party', child: Text('Hora de Fiesta')),
-              ],
+                borderRadius: BorderRadius.circular(18),
 
-              onChanged: (value) {
-                if (value == null) return;
+                border: Border.all(color: Colors.grey.shade300),
 
-                empresaProvider.cambiarEmpresa(value);
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
 
-                context.read<EventosProvider>().cargarEventos(value);
-              },
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: empresaProvider.empresaActual,
+
+                  isExpanded: true,
+
+                  borderRadius: BorderRadius.circular(18),
+
+                  dropdownColor: Colors.white,
+
+                  icon: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: primaryColor,
+                  ),
+
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'golden',
+
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Color(0xFFF3F4F6),
+
+                            child: Icon(
+                              Icons.celebration_rounded,
+                              color: Color(0xFF374151),
+                              size: 18,
+                            ),
+                          ),
+
+                          SizedBox(width: 12),
+
+                          Text(
+                            'Golden Garden',
+
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              color: Color(0xFF111827),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    DropdownMenuItem(
+                      value: 'party',
+
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Color(0xFFF3F4F6),
+
+                            child: Icon(
+                              Icons.cake_rounded,
+                              color: Color(0xFF374151),
+                              size: 18,
+                            ),
+                          ),
+
+                          SizedBox(width: 12),
+
+                          Text(
+                            'Hora de Fiesta',
+
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              color: Color(0xFF111827),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
+                  onChanged: (value) {
+                    if (value == null) return;
+
+                    empresaProvider.cambiarEmpresa(value);
+
+                    context.read<EventosProvider>().cargarEventos(value);
+                  },
+                ),
+              ),
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(height: 16),
 
             /// FORMULARIO
             if (mostrarFormulario) ...[
-              TextField(
-                controller: tituloController,
+              Container(
+                padding: const EdgeInsets.all(16),
 
-                decoration: const InputDecoration(
-                  labelText: 'Título',
-                  border: OutlineInputBorder(),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+
+                  borderRadius: BorderRadius.circular(20),
+
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: tituloController,
+
+                      decoration: InputDecoration(
+                        labelText: 'Título',
+
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    TextField(
+                      controller: descripcionController,
+
+                      maxLines: 3,
+
+                      decoration: InputDecoration(
+                        labelText: 'Descripción',
+
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: accentColor,
+
+                          foregroundColor: Colors.white,
+
+                          elevation: 0,
+
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+
+                        onPressed: seleccionarFecha,
+
+                        icon: const Icon(Icons.calendar_month),
+
+                        label: Text(
+                          fechaSeleccionada == null
+                              ? 'Seleccionar Fecha'
+                              : fechaSeleccionada.toString().split(' ')[0],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 52,
+
+                            child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+
+                                foregroundColor: Colors.white,
+
+                                elevation: 0,
+
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+
+                              onPressed: guardarEvento,
+
+                              icon: const Icon(Icons.save),
+
+                              label: const Text('Guardar'),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 10),
+
+                        Expanded(
+                          child: SizedBox(
+                            height: 52,
+
+                            child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey.shade200,
+
+                                foregroundColor: Colors.black87,
+
+                                elevation: 0,
+
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+
+                              onPressed: () {
+                                setState(() {
+                                  mostrarFormulario = false;
+                                });
+                              },
+
+                              icon: const Icon(Icons.close),
+
+                              label: const Text('Cancelar'),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
 
-              const SizedBox(height: 10),
-
-              TextField(
-                controller: descripcionController,
-
-                maxLines: 3,
-
-                decoration: const InputDecoration(
-                  labelText: 'Descripción',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              SizedBox(
-                height: 50,
-                width: double.infinity,
-
-                child: ElevatedButton.icon(
-                  onPressed: seleccionarFecha,
-
-                  icon: const Icon(Icons.calendar_month),
-
-                  label: Text(
-                    fechaSeleccionada == null
-                        ? 'Seleccionar Fecha'
-                        : fechaSeleccionada.toString().split(' ')[0],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              SizedBox(
-                height: 50,
-                width: double.infinity,
-
-                child: ElevatedButton.icon(
-                  onPressed: guardarEvento,
-
-                  icon: const Icon(Icons.save),
-
-                  label: const Text('Guardar Evento'),
-                ),
-              ),
-
-              const SizedBox(height: 15),
+              const SizedBox(height: 16),
             ],
 
-            /// BOTONES
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        mostrarCalendario = false;
-                      });
-                    },
+            /// BOTONES LISTA / CALENDARIO
+            Container(
+              padding: const EdgeInsets.all(4),
 
-                    icon: const Icon(Icons.list),
+              decoration: BoxDecoration(
+                color: Colors.white,
 
-                    label: const Text('Lista'),
+                borderRadius: BorderRadius.circular(16),
+              ),
+
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: !mostrarCalendario
+                            ? primaryColor
+                            : Colors.transparent,
+
+                        foregroundColor: !mostrarCalendario
+                            ? Colors.white
+                            : Colors.black87,
+
+                        elevation: 0,
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+
+                      onPressed: () {
+                        setState(() {
+                          mostrarCalendario = false;
+                        });
+                      },
+
+                      icon: const Icon(Icons.list),
+
+                      label: const Text('Lista'),
+                    ),
                   ),
-                ),
 
-                const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: mostrarCalendario
+                            ? primaryColor
+                            : Colors.transparent,
 
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        mostrarCalendario = true;
-                      });
-                    },
+                        foregroundColor: mostrarCalendario
+                            ? Colors.white
+                            : Colors.black87,
 
-                    icon: const Icon(Icons.calendar_month),
+                        elevation: 0,
 
-                    label: const Text('Calendario'),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+
+                      onPressed: () {
+                        setState(() {
+                          mostrarCalendario = true;
+                        });
+                      },
+
+                      icon: const Icon(Icons.calendar_month),
+
+                      label: const Text('Calendario'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(height: 16),
 
             /// CONTENIDO
             Expanded(
@@ -269,14 +502,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) {
                         final eventos = [...eventosProvider.eventos];
 
-                        /// ORDENAR FECHAS
                         eventos.sort((a, b) {
                           return DateTime.parse(
                             a.fecha,
                           ).compareTo(DateTime.parse(b.fecha));
                         });
 
-                        /// AGRUPAR POR MES
                         Map<String, List<EventoModel>> grupos = {};
 
                         final meses = [
@@ -321,24 +552,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
 
                               children: [
-                                /// HEADER DEL MES
                                 Container(
                                   width: double.infinity,
 
                                   margin: const EdgeInsets.only(
-                                    top: 12,
-                                    bottom: 8,
+                                    bottom: 10,
+                                    top: 8,
                                   ),
 
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
+                                    horizontal: 16,
                                     vertical: 12,
                                   ),
 
                                   decoration: BoxDecoration(
-                                    color: Colors.orange,
+                                    color: primaryColor,
 
-                                    borderRadius: BorderRadius.circular(14),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
 
                                   child: Text(
@@ -354,7 +584,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
 
-                                /// EVENTOS
                                 ...eventosGrupo.map((evento) {
                                   return EventoCard(evento: evento);
                                 }),

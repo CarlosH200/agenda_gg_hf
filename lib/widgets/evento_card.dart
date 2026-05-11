@@ -19,6 +19,10 @@ class _EventoCardState extends State<EventoCard> {
 
   DateTime? fechaSeleccionada;
 
+  final Color primaryColor = const Color(0xFF1F2937);
+  final Color accentColor = const Color(0xFF374151);
+  final Color backgroundColor = const Color(0xFFF9FAFB);
+
   @override
   void initState() {
     super.initState();
@@ -80,43 +84,92 @@ class _EventoCardState extends State<EventoCard> {
       context: context,
       builder: (_) {
         return AlertDialog(
+          backgroundColor: Colors.white,
+
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
 
-          title: const Text('Editar Evento'),
+          title: const Text(
+            'Editar Evento',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
 
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
+
               children: [
                 TextField(
                   controller: tituloController,
-                  decoration: const InputDecoration(
+
+                  decoration: InputDecoration(
                     labelText: 'Título',
-                    border: OutlineInputBorder(),
+
+                    filled: true,
+                    fillColor: backgroundColor,
+
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
 
                 TextField(
                   controller: descripcionController,
+
                   maxLines: 3,
-                  decoration: const InputDecoration(
+
+                  decoration: InputDecoration(
                     labelText: 'Descripción',
-                    border: OutlineInputBorder(),
+
+                    filled: true,
+                    fillColor: backgroundColor,
+
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 15),
+                const SizedBox(height: 16),
 
                 SizedBox(
                   width: double.infinity,
                   height: 50,
+
                   child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: accentColor,
+                      foregroundColor: Colors.white,
+
+                      elevation: 0,
+
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+
                     onPressed: seleccionarFecha,
+
                     icon: const Icon(Icons.calendar_month),
+
                     label: Text(
                       fechaSeleccionada == null
                           ? 'Seleccionar Fecha'
@@ -128,15 +181,40 @@ class _EventoCardState extends State<EventoCard> {
             ),
           ),
 
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
+
+              child: Text(
+                'Cancelar',
+
+                style: TextStyle(color: Colors.grey.shade700),
+              ),
             ),
 
             ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+
+                elevation: 0,
+
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+
               onPressed: guardarCambios,
+
               icon: const Icon(Icons.save),
+
               label: const Text('Guardar'),
             ),
           ],
@@ -150,98 +228,183 @@ class _EventoCardState extends State<EventoCard> {
     return Container(
       width: double.infinity,
 
-      margin: const EdgeInsets.symmetric(vertical: 6),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
 
       child: Card(
-        elevation: 4,
+        color: Colors.white,
 
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 0,
+
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22),
+
+          side: BorderSide(color: Colors.grey.shade200),
+        ),
 
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
+              /// TITULO
               Row(
-                children: [
-                  const Icon(Icons.event, color: Colors.orange),
+                crossAxisAlignment: CrossAxisAlignment.center,
 
-                  const SizedBox(width: 8),
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+
+                    decoration: BoxDecoration(
+                      color: backgroundColor,
+
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+
+                    child: Icon(
+                      Icons.event_rounded,
+                      color: primaryColor,
+                      size: 22,
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
 
                   Expanded(
                     child: Text(
                       widget.evento.titulo,
+
                       style: const TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF111827),
                       ),
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
 
-              Text(
-                widget.evento.descripcion,
-                style: const TextStyle(fontSize: 15),
+              /// DESCRIPCION
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+
+                child: Text(
+                  widget.evento.descripcion,
+
+                  style: TextStyle(
+                    fontSize: 15,
+                    height: 1.5,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_today,
-                    size: 18,
-                    color: Colors.orange,
-                  ),
+              /// FECHA
+              Container(
+                width: double.infinity,
 
-                  const SizedBox(width: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
 
-                  Text(
-                    widget.evento.fecha,
-                    style: const TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.w600,
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+
+                  borderRadius: BorderRadius.circular(14),
+                ),
+
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      size: 18,
+                      color: accentColor,
                     ),
-                  ),
-                ],
+
+                    const SizedBox(width: 10),
+
+                    Text(
+                      widget.evento.fecha,
+
+                      style: TextStyle(
+                        color: accentColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               const SizedBox(height: 18),
 
+              /// BOTONES
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: mostrarEditarModal,
+                    child: SizedBox(
+                      height: 44,
 
-                      icon: const Icon(Icons.edit),
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
 
-                      label: const Text('Editar'),
+                          foregroundColor: Colors.white,
+
+                          elevation: 0,
+
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+
+                        onPressed: mostrarEditarModal,
+
+                        icon: const Icon(Icons.edit),
+
+                        label: const Text('Editar'),
+                      ),
                     ),
                   ),
 
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
 
                   Expanded(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                    child: SizedBox(
+                      height: 44,
+
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFEF4444),
+
+                          foregroundColor: Colors.white,
+
+                          elevation: 0,
+
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+
+                        onPressed: () {
+                          context.read<EventosProvider>().eliminarEvento(
+                            widget.evento.id,
+                          );
+                        },
+
+                        icon: const Icon(Icons.delete),
+
+                        label: const Text('Eliminar'),
                       ),
-
-                      onPressed: () {
-                        context.read<EventosProvider>().eliminarEvento(
-                          widget.evento.id,
-                        );
-                      },
-
-                      icon: const Icon(Icons.delete),
-
-                      label: const Text('Eliminar'),
                     ),
                   ),
                 ],
