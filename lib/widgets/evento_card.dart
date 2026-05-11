@@ -85,91 +85,72 @@ class _EventoCardState extends State<EventoCard> {
       builder: (_) {
         return AlertDialog(
           backgroundColor: Colors.white,
-
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
           ),
 
           title: const Text(
             'Editar Evento',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
 
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-
               children: [
                 TextField(
                   controller: tituloController,
-
                   decoration: InputDecoration(
                     labelText: 'Título',
-
                     filled: true,
                     fillColor: backgroundColor,
-
                     contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
+                      horizontal: 14,
+                      vertical: 12,
                     ),
-
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 14),
+                const SizedBox(height: 10),
 
                 TextField(
                   controller: descripcionController,
-
                   maxLines: 3,
-
                   decoration: InputDecoration(
                     labelText: 'Descripción',
-
                     filled: true,
                     fillColor: backgroundColor,
-
                     contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
+                      horizontal: 14,
+                      vertical: 12,
                     ),
-
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
-
+                  height: 45,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: accentColor,
                       foregroundColor: Colors.white,
-
                       elevation: 0,
-
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-
                     onPressed: seleccionarFecha,
-
-                    icon: const Icon(Icons.calendar_month),
-
+                    icon: const Icon(Icons.calendar_month, size: 18),
                     label: Text(
                       fechaSeleccionada == null
                           ? 'Seleccionar Fecha'
@@ -181,18 +162,11 @@ class _EventoCardState extends State<EventoCard> {
             ),
           ),
 
-          actionsPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-
               child: Text(
                 'Cancelar',
-
                 style: TextStyle(color: Colors.grey.shade700),
               ),
             ),
@@ -201,20 +175,13 @@ class _EventoCardState extends State<EventoCard> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
-
                 elevation: 0,
-
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-
               onPressed: guardarCambios,
-
-              icon: const Icon(Icons.save),
-
+              icon: const Icon(Icons.save, size: 18),
               label: const Text('Guardar'),
             ),
           ],
@@ -226,23 +193,19 @@ class _EventoCardState extends State<EventoCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+      margin: const EdgeInsets.symmetric(vertical: 5),
 
       child: Card(
         color: Colors.white,
-
         elevation: 0,
 
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-
+          borderRadius: BorderRadius.circular(18),
           side: BorderSide(color: Colors.grey.shade200),
         ),
 
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,33 +213,30 @@ class _EventoCardState extends State<EventoCard> {
             children: [
               /// TITULO
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
 
                     decoration: BoxDecoration(
                       color: backgroundColor,
-
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(10),
                     ),
 
                     child: Icon(
                       Icons.event_rounded,
                       color: primaryColor,
-                      size: 22,
+                      size: 18,
                     ),
                   ),
 
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
 
                   Expanded(
                     child: Text(
                       widget.evento.titulo,
 
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF111827),
                       ),
@@ -285,49 +245,38 @@ class _EventoCardState extends State<EventoCard> {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               /// DESCRIPCION
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2),
+                padding: const EdgeInsets.only(left: 34),
 
                 child: Text(
                   widget.evento.descripcion,
 
                   style: TextStyle(
-                    fontSize: 15,
-                    height: 1.5,
+                    fontSize: 14,
+                    height: 1.3,
                     color: Colors.grey.shade700,
                   ),
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               /// FECHA
-              Container(
-                width: double.infinity,
-
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-
-                  borderRadius: BorderRadius.circular(14),
-                ),
+              Padding(
+                padding: const EdgeInsets.only(left: 34),
 
                 child: Row(
                   children: [
                     Icon(
                       Icons.calendar_today_rounded,
-                      size: 18,
+                      size: 15,
                       color: accentColor,
                     ),
 
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 6),
 
                     Text(
                       widget.evento.fecha,
@@ -335,63 +284,61 @@ class _EventoCardState extends State<EventoCard> {
                       style: TextStyle(
                         color: accentColor,
                         fontWeight: FontWeight.w600,
+                        fontSize: 13,
                       ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 18),
+              const SizedBox(height: 14),
 
               /// BOTONES
               Row(
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 44,
+                      height: 38,
 
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: primaryColor,
-
                           foregroundColor: Colors.white,
-
                           elevation: 0,
-
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          padding: EdgeInsets.zero,
 
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
 
                         onPressed: mostrarEditarModal,
 
-                        icon: const Icon(Icons.edit),
+                        icon: const Icon(Icons.edit, size: 16),
 
-                        label: const Text('Editar'),
+                        label: const Text(
+                          'Editar',
+                          style: TextStyle(fontSize: 13),
+                        ),
                       ),
                     ),
                   ),
 
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
 
                   Expanded(
                     child: SizedBox(
-                      height: 44,
+                      height: 38,
 
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFEF4444),
-
                           foregroundColor: Colors.white,
-
                           elevation: 0,
-
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          padding: EdgeInsets.zero,
 
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
 
@@ -401,9 +348,12 @@ class _EventoCardState extends State<EventoCard> {
                           );
                         },
 
-                        icon: const Icon(Icons.delete),
+                        icon: const Icon(Icons.delete, size: 16),
 
-                        label: const Text('Eliminar'),
+                        label: const Text(
+                          'Eliminar',
+                          style: TextStyle(fontSize: 13),
+                        ),
                       ),
                     ),
                   ),

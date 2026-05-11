@@ -52,6 +52,24 @@ class _HomeScreenState extends State<HomeScreen> {
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
       initialDate: DateTime.now(),
+
+      /// COLORES DEL CALENDARIO
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: primaryColor,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(foregroundColor: primaryColor),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (fecha != null) {
@@ -182,6 +200,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: primaryColor,
                   ),
 
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+
                   items: const [
                     DropdownMenuItem(
                       value: 'golden',
@@ -280,11 +304,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 child: Column(
                   children: [
+                    /// TITULO
                     TextField(
                       controller: tituloController,
 
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
+
                       decoration: InputDecoration(
                         labelText: 'Título',
+
+                        labelStyle: TextStyle(color: Colors.grey.shade700),
 
                         filled: true,
                         fillColor: Colors.grey.shade100,
@@ -298,13 +327,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 12),
 
+                    /// DESCRIPCION
                     TextField(
                       controller: descripcionController,
 
                       maxLines: 3,
 
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
+
                       decoration: InputDecoration(
                         labelText: 'Descripción',
+
+                        labelStyle: TextStyle(color: Colors.grey.shade700),
 
                         filled: true,
                         fillColor: Colors.grey.shade100,
@@ -318,6 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 12),
 
+                    /// FECHA
                     SizedBox(
                       width: double.infinity,
                       height: 52,
@@ -349,6 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 12),
 
+                    /// BOTONES
                     Row(
                       children: [
                         Expanded(
