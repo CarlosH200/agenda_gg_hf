@@ -24,11 +24,19 @@ class _EventoCardState extends State<EventoCard> {
     super.initState();
 
     tituloController = TextEditingController(text: widget.evento.titulo);
+
     descripcionController = TextEditingController(
       text: widget.evento.descripcion,
     );
 
     fechaSeleccionada = DateTime.tryParse(widget.evento.fecha);
+  }
+
+  @override
+  void dispose() {
+    tituloController.dispose();
+    descripcionController.dispose();
+    super.dispose();
   }
 
   Future<void> seleccionarFecha() async {
@@ -62,7 +70,9 @@ class _EventoCardState extends State<EventoCard> {
 
     await context.read<EventosProvider>().editarEvento(actualizado);
 
-    if (mounted) Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   void mostrarEditarModal() {
@@ -70,44 +80,64 @@ class _EventoCardState extends State<EventoCard> {
       context: context,
       builder: (_) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+
           title: const Text('Editar Evento'),
+
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: tituloController,
-                  decoration: const InputDecoration(labelText: 'Título'),
+                  decoration: const InputDecoration(
+                    labelText: 'Título',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
                 TextField(
                   controller: descripcionController,
-                  decoration: const InputDecoration(labelText: 'Descripción'),
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: 'Descripción',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
 
                 const SizedBox(height: 15),
 
-                ElevatedButton(
-                  onPressed: seleccionarFecha,
-                  child: Text(
-                    fechaSeleccionada == null
-                        ? 'Seleccionar Fecha'
-                        : fechaSeleccionada.toString().split(' ')[0],
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton.icon(
+                    onPressed: seleccionarFecha,
+                    icon: const Icon(Icons.calendar_month),
+                    label: Text(
+                      fechaSeleccionada == null
+                          ? 'Seleccionar Fecha'
+                          : fechaSeleccionada.toString().split(' ')[0],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Cancelar'),
             ),
-            ElevatedButton(
+
+            ElevatedButton.icon(
               onPressed: guardarCambios,
-              child: const Text('Guardar'),
+              icon: const Icon(Icons.save),
+              label: const Text('Guardar'),
             ),
           ],
         );
@@ -119,58 +149,99 @@ class _EventoCardState extends State<EventoCard> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+
       margin: const EdgeInsets.symmetric(vertical: 6),
+
       child: Card(
         elevation: 4,
+
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+
         child: Padding(
           padding: const EdgeInsets.all(16),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
-              Text(
-                widget.evento.titulo,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                children: [
+                  const Icon(Icons.event, color: Colors.orange),
+
+                  const SizedBox(width: 8),
+
+                  Expanded(
+                    child: Text(
+                      widget.evento.titulo,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
-              const SizedBox(height: 8),
-
-              Text(widget.evento.descripcion),
-
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
               Text(
-                widget.evento.fecha,
-                style: const TextStyle(color: Colors.orange),
+                widget.evento.descripcion,
+                style: const TextStyle(fontSize: 15),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
+
+              Row(
+                children: [
+                  const Icon(
+                    Icons.calendar_today,
+                    size: 18,
+                    color: Colors.orange,
+                  ),
+
+                  const SizedBox(width: 6),
+
+                  Text(
+                    widget.evento.fecha,
+                    style: const TextStyle(
+                      color: Colors.orange,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 18),
 
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(
+                    child: ElevatedButton.icon(
                       onPressed: mostrarEditarModal,
-                      child: const Text('Editar'),
+
+                      icon: const Icon(Icons.edit),
+
+                      label: const Text('Editar'),
                     ),
                   ),
 
                   const SizedBox(width: 10),
 
                   Expanded(
-                    child: ElevatedButton(
+                    child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                       ),
+
                       onPressed: () {
                         context.read<EventosProvider>().eliminarEvento(
                           widget.evento.id,
                         );
                       },
-                      child: const Text('Eliminar'),
+
+                      icon: const Icon(Icons.delete),
+
+                      label: const Text('Eliminar'),
                     ),
                   ),
                 ],

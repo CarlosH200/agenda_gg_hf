@@ -20,18 +20,26 @@ class _HomeScreenState extends State<HomeScreen> {
   final descripcionController = TextEditingController();
 
   DateTime? fechaSeleccionada;
+
   bool mostrarCalendario = false;
-  bool cargado = false;
+  bool mostrarFormulario = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
-    if (!cargado) {
+    Future.microtask(() {
       final empresa = context.read<EmpresaProvider>().empresaActual;
+
       context.read<EventosProvider>().cargarEventos(empresa);
-      cargado = true;
-    }
+    });
+  }
+
+  @override
+  void dispose() {
+    tituloController.dispose();
+    descripcionController.dispose();
+    super.dispose();
   }
 
   Future<void> seleccionarFecha() async {
@@ -52,8 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> guardarEvento() async {
     if (tituloController.text.isEmpty ||
         descripcionController.text.isEmpty ||
-        fechaSeleccionada == null)
+        fechaSeleccionada == null) {
       return;
+    }
 
     final empresa = context.read<EmpresaProvider>().empresaActual;
 
@@ -75,108 +84,260 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       fechaSeleccionada = null;
+      mostrarFormulario = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final empresaProvider = context.watch<EmpresaProvider>();
+
     final eventosProvider = context.watch<EventosProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Agenda Eventos')),
+      appBar: AppBar(
+        title: const Text('Agenda Eventos'),
+
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                mostrarFormulario = !mostrarFormulario;
+              });
+            },
+
+            icon: Icon(mostrarFormulario ? Icons.close : Icons.add),
+          ),
+        ],
+      ),
 
       body: Padding(
         padding: const EdgeInsets.all(16),
+
         child: Column(
           children: [
+            /// EMPRESAS
             DropdownButton<String>(
               value: empresaProvider.empresaActual,
+
               isExpanded: true,
+
               items: const [
                 DropdownMenuItem(value: 'golden', child: Text('Golden Garden')),
+
                 DropdownMenuItem(value: 'party', child: Text('Hora de Fiesta')),
               ],
+
               onChanged: (value) {
                 if (value == null) return;
 
                 empresaProvider.cambiarEmpresa(value);
+
                 context.read<EventosProvider>().cargarEventos(value);
               },
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
 
-            TextField(
-              controller: tituloController,
-              decoration: const InputDecoration(
-                labelText: 'Título',
-                border: OutlineInputBorder(),
+            /// FORMULARIO
+            if (mostrarFormulario) ...[
+              TextField(
+                controller: tituloController,
+
+                decoration: const InputDecoration(
+                  labelText: 'Título',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
 
-            const SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-            TextField(
-              controller: descripcionController,
-              decoration: const InputDecoration(
-                labelText: 'Descripción',
-                border: OutlineInputBorder(),
+              TextField(
+                controller: descripcionController,
+
+                maxLines: 3,
+
+                decoration: const InputDecoration(
+                  labelText: 'Descripción',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
 
-            const SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-            ElevatedButton(
-              onPressed: seleccionarFecha,
-              child: Text(
-                fechaSeleccionada == null
-                    ? 'Seleccionar Fecha'
-                    : fechaSeleccionada.toString().split(' ')[0],
+              SizedBox(
+                height: 50,
+                width: double.infinity,
+
+                child: ElevatedButton.icon(
+                  onPressed: seleccionarFecha,
+
+                  icon: const Icon(Icons.calendar_month),
+
+                  label: Text(
+                    fechaSeleccionada == null
+                        ? 'Seleccionar Fecha'
+                        : fechaSeleccionada.toString().split(' ')[0],
+                  ),
+                ),
               ),
-            ),
 
-            const SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-            ElevatedButton(
-              onPressed: guardarEvento,
-              child: const Text('Guardar Evento'),
-            ),
+              SizedBox(
+                height: 50,
+                width: double.infinity,
 
-            const SizedBox(height: 10),
+                child: ElevatedButton.icon(
+                  onPressed: guardarEvento,
 
+                  icon: const Icon(Icons.save),
+
+                  label: const Text('Guardar Evento'),
+                ),
+              ),
+
+              const SizedBox(height: 15),
+            ],
+
+            /// BOTONES
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => setState(() {
-                      mostrarCalendario = false;
-                    }),
-                    child: const Text('Lista'),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        mostrarCalendario = false;
+                      });
+                    },
+
+                    icon: const Icon(Icons.list),
+
+                    label: const Text('Lista'),
                   ),
                 ),
+
                 const SizedBox(width: 10),
+
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => setState(() {
-                      mostrarCalendario = true;
-                    }),
-                    child: const Text('Calendario'),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        mostrarCalendario = true;
+                      });
+                    },
+
+                    icon: const Icon(Icons.calendar_month),
+
+                    label: const Text('Calendario'),
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
 
+            /// CONTENIDO
             Expanded(
               child: mostrarCalendario
                   ? CalendarioWidget(eventos: eventosProvider.eventos)
-                  : ListView.builder(
-                      itemCount: eventosProvider.eventos.length,
-                      itemBuilder: (context, index) {
-                        final evento = eventosProvider.eventos[index];
-                        return EventoCard(evento: evento);
+                  : Builder(
+                      builder: (context) {
+                        final eventos = [...eventosProvider.eventos];
+
+                        /// ORDENAR FECHAS
+                        eventos.sort((a, b) {
+                          return DateTime.parse(
+                            a.fecha,
+                          ).compareTo(DateTime.parse(b.fecha));
+                        });
+
+                        /// AGRUPAR POR MES
+                        Map<String, List<EventoModel>> grupos = {};
+
+                        final meses = [
+                          '',
+                          'ENERO',
+                          'FEBRERO',
+                          'MARZO',
+                          'ABRIL',
+                          'MAYO',
+                          'JUNIO',
+                          'JULIO',
+                          'AGOSTO',
+                          'SEPTIEMBRE',
+                          'OCTUBRE',
+                          'NOVIEMBRE',
+                          'DICIEMBRE',
+                        ];
+
+                        for (var evento in eventos) {
+                          final fecha = DateTime.parse(evento.fecha);
+
+                          final key = '${meses[fecha.month]} - ${fecha.year}';
+
+                          if (!grupos.containsKey(key)) {
+                            grupos[key] = [];
+                          }
+
+                          grupos[key]!.add(evento);
+                        }
+
+                        final keys = grupos.keys.toList();
+
+                        return ListView.builder(
+                          itemCount: keys.length,
+
+                          itemBuilder: (context, index) {
+                            final key = keys[index];
+
+                            final eventosGrupo = grupos[key]!;
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                              children: [
+                                /// HEADER DEL MES
+                                Container(
+                                  width: double.infinity,
+
+                                  margin: const EdgeInsets.only(
+                                    top: 12,
+                                    bottom: 8,
+                                  ),
+
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 12,
+                                  ),
+
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange,
+
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+
+                                  child: Text(
+                                    key,
+
+                                    style: const TextStyle(
+                                      color: Colors.white,
+
+                                      fontSize: 18,
+
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+
+                                /// EVENTOS
+                                ...eventosGrupo.map((evento) {
+                                  return EventoCard(evento: evento);
+                                }),
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
             ),
