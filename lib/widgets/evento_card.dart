@@ -79,6 +79,47 @@ class _EventoCardState extends State<EventoCard> {
     }
   }
 
+  Future<void> mostrarConfirmacionEliminar(EventoModel evento) async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Eliminar evento"),
+          content: const Text("¿Estás seguro de eliminar este evento?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("Cancelar"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text(
+                "Eliminar",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmar == true) {
+      try {
+        await context.read<EventosProvider>().eliminarEvento(evento.id);
+
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Evento eliminado")));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Error al eliminar evento")),
+        );
+      }
+    }
+  }
+
   void mostrarEditarModal() {
     showDialog(
       context: context,
@@ -91,23 +132,42 @@ class _EventoCardState extends State<EventoCard> {
 
           title: const Text(
             'Editar Evento',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Colors.black, // 🔥 TEXTO NEGRO
+            ),
           ),
 
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                /// TÍTULO
                 TextField(
                   controller: tituloController,
+
+                  style: const TextStyle(
+                    color: Colors.black, // 🔥 TEXTO NEGRO
+                    fontSize: 16,
+                  ),
+
+                  cursorColor: Colors.black, // 🔥 CURSOR NEGRO
+
                   decoration: InputDecoration(
                     labelText: 'Título',
+                    labelStyle: const TextStyle(
+                      color: Colors.black, // 🔥 LABEL NEGRO
+                    ),
+
                     filled: true,
                     fillColor: backgroundColor,
+
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 12,
                     ),
+
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -117,17 +177,33 @@ class _EventoCardState extends State<EventoCard> {
 
                 const SizedBox(height: 10),
 
+                /// DESCRIPCIÓN
                 TextField(
                   controller: descripcionController,
+
+                  style: const TextStyle(
+                    color: Colors.black, // 🔥 TEXTO NEGRO
+                    fontSize: 16,
+                  ),
+
+                  cursorColor: Colors.black, // 🔥 CURSOR NEGRO
+
                   maxLines: 3,
+
                   decoration: InputDecoration(
                     labelText: 'Descripción',
+                    labelStyle: const TextStyle(
+                      color: Colors.black, // 🔥 LABEL NEGRO
+                    ),
+
                     filled: true,
                     fillColor: backgroundColor,
+
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 12,
                     ),
+
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -137,9 +213,11 @@ class _EventoCardState extends State<EventoCard> {
 
                 const SizedBox(height: 12),
 
+                /// FECHA
                 SizedBox(
                   width: double.infinity,
                   height: 45,
+
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: accentColor,
@@ -149,8 +227,11 @@ class _EventoCardState extends State<EventoCard> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+
                     onPressed: seleccionarFecha,
+
                     icon: const Icon(Icons.calendar_month, size: 18),
+
                     label: Text(
                       fechaSeleccionada == null
                           ? 'Seleccionar Fecha'
@@ -180,8 +261,11 @@ class _EventoCardState extends State<EventoCard> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
+
               onPressed: guardarCambios,
+
               icon: const Icon(Icons.save, size: 18),
+
               label: const Text('Guardar'),
             ),
           ],
@@ -312,7 +396,9 @@ class _EventoCardState extends State<EventoCard> {
                           ),
                         ),
 
-                        onPressed: mostrarEditarModal,
+                        onPressed: () {
+                          mostrarEditarModal();
+                        },
 
                         icon: const Icon(Icons.edit, size: 16),
 
@@ -343,9 +429,7 @@ class _EventoCardState extends State<EventoCard> {
                         ),
 
                         onPressed: () {
-                          context.read<EventosProvider>().eliminarEvento(
-                            widget.evento.id,
-                          );
+                          mostrarConfirmacionEliminar(widget.evento);
                         },
 
                         icon: const Icon(Icons.delete, size: 16),

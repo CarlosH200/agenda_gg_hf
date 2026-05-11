@@ -83,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (tituloController.text.isEmpty ||
         descripcionController.text.isEmpty ||
         fechaSeleccionada == null) {
+      mensaje("Completa todos los campos");
       return;
     }
 
@@ -99,15 +100,52 @@ class _HomeScreenState extends State<HomeScreen> {
       empresa: empresa,
     );
 
-    await context.read<EventosProvider>().agregarEvento(evento);
+    try {
+      await context.read<EventosProvider>().agregarEvento(evento);
 
+      /// 🔥 IMPORTANTE: verificar antes de usar context después de await
+      if (!mounted) return;
+
+      tituloController.clear();
+      descripcionController.clear();
+
+      setState(() {
+        fechaSeleccionada = null;
+        mostrarFormulario = false;
+      });
+
+      mensaje("Evento creado correctamente");
+    } catch (e) {
+      if (!mounted) return;
+
+      mensaje("Error al crear el evento");
+    }
+  }
+
+  void habilitarFormulario() {
+    setState(() {
+      limpiarFormulario();
+      if (!mostrarFormulario)
+        mostrarFormulario = true;
+      else
+        mostrarFormulario = false;
+    });
+  }
+
+  void mensaje(String texto) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(texto), duration: const Duration(seconds: 2)),
+    );
+  }
+
+  void limpiarFormulario() {
     tituloController.clear();
     descripcionController.clear();
-
-    setState(() {
-      fechaSeleccionada = null;
-      mostrarFormulario = false;
-    });
+    fechaSeleccionada = null;
   }
 
   @override
@@ -145,9 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               onPressed: () {
-                setState(() {
-                  mostrarFormulario = !mostrarFormulario;
-                });
+                habilitarFormulario();
               },
 
               icon: Icon(
