@@ -99,14 +99,30 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Agenda Eventos'),
 
         actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                mostrarFormulario = !mostrarFormulario;
-              });
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
 
-            icon: Icon(mostrarFormulario ? Icons.close : Icons.add),
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+
+              onPressed: () {
+                setState(() {
+                  mostrarFormulario = !mostrarFormulario;
+                });
+              },
+
+              icon: Icon(
+                mostrarFormulario
+                    ? Icons.visibility_off
+                    : Icons.event_available,
+              ),
+
+              label: Text(mostrarFormulario ? 'Ocultar' : 'Nuevo Evento'),
+            ),
           ),
         ],
       ),
