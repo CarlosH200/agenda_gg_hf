@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 48,
           child: Image.asset(
             empresaProvider.empresaActual == 'golden'
-                ? 'assets/GoldenGardenDarckTheme.png'
+                ? 'assets/GoldenGarden.png'
                 : 'assets/HoraDeFiesta.png',
             fit: BoxFit.contain,
           ),
@@ -175,19 +175,26 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
-
-            child: IconButton(
-              style: IconButton.styleFrom(
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
                 backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-
-              onPressed: () {
-                habilitarFormulario();
-              },
-
+              onPressed: habilitarFormulario,
               icon: Icon(
                 mostrarFormulario ? Icons.close_rounded : Icons.add_rounded,
+                size: 18,
+              ),
+              label: Text(
+                mostrarFormulario ? "Cerrar" : "Nuevo",
+                style: const TextStyle(fontSize: 13),
               ),
             ),
           ),
@@ -568,7 +575,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
             /// CONTENIDO
             Expanded(
-              child: mostrarCalendario
+              child: eventosProvider.isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                      ),
+                    )
+                  : mostrarCalendario
                   ? CalendarioWidget(eventos: eventosProvider.eventos)
                   : Builder(
                       builder: (context) {
