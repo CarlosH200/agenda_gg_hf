@@ -96,7 +96,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agenda Eventos'),
+        title: SizedBox(
+          height: 45,
+          child: Image.asset(
+            empresaProvider.empresaActual == 'golden'
+                ? 'assets/GoldenGardenDarckTheme.png'
+                : 'assets/HoraDeFiesta.png',
+            fit: BoxFit.contain,
+          ),
+        ),
 
         actions: [
           Padding(
