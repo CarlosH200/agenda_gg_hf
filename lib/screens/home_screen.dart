@@ -103,7 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await context.read<EventosProvider>().agregarEvento(evento);
 
-      /// 🔥 IMPORTANTE: verificar antes de usar context después de await
       if (!mounted) return;
 
       tituloController.clear();
@@ -125,10 +124,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void habilitarFormulario() {
     setState(() {
       limpiarFormulario();
-      if (!mostrarFormulario)
+
+      if (!mostrarFormulario) {
         mostrarFormulario = true;
-      else
+      } else {
         mostrarFormulario = false;
+      }
     });
   }
 
@@ -155,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final eventosProvider = context.watch<EventosProvider>();
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: backgroundColor,
 
       appBar: AppBar(
@@ -164,6 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         title: SizedBox(
           height: 48,
+          width: 140,
           child: Image.asset(
             empresaProvider.empresaActual == 'golden'
                 ? 'assets/GoldenGarden.png'
@@ -175,23 +178,29 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
+
             child: TextButton.icon(
               style: TextButton.styleFrom(
                 backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
+
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 10,
                 ),
+
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
+
               onPressed: habilitarFormulario,
+
               icon: Icon(
                 mostrarFormulario ? Icons.close_rounded : Icons.add_rounded,
                 size: 18,
               ),
+
               label: Text(
                 mostrarFormulario ? "Cerrar" : "Nuevo",
                 style: const TextStyle(fontSize: 13),
@@ -201,485 +210,537 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
 
-        child: Column(
-          children: [
-            /// SELECT EMPRESA
-            Container(
-              width: double.infinity,
+          child: Column(
+            children: [
+              /// CONTENIDO SUPERIOR SCROLLEABLE
+              Expanded(
+                child: SingleChildScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
 
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  child: Column(
+                    children: [
+                      /// SELECT EMPRESA
+                      Container(
+                        width: double.infinity,
 
-              decoration: BoxDecoration(
-                color: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
 
-                borderRadius: BorderRadius.circular(18),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
 
-                border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(18),
 
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
+                          border: Border.all(color: Colors.grey.shade300),
 
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: empresaProvider.empresaActual,
-
-                  isExpanded: true,
-
-                  borderRadius: BorderRadius.circular(18),
-
-                  dropdownColor: Colors.white,
-
-                  icon: Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: primaryColor,
-                  ),
-
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'golden',
-
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 14,
-                            backgroundColor: Color(0xFFF3F4F6),
-
-                            child: Icon(
-                              Icons.celebration_rounded,
-                              color: Color(0xFF374151),
-                              size: 18,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
+                          ],
+                        ),
 
-                          SizedBox(width: 12),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: empresaProvider.empresaActual,
 
-                          Text(
-                            'Golden Garden',
+                            isExpanded: true,
 
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
+                            borderRadius: BorderRadius.circular(18),
+
+                            dropdownColor: Colors.white,
+
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: primaryColor,
+                            ),
+
+                            style: const TextStyle(
+                              color: Colors.black,
                               fontSize: 15,
-                              color: Color(0xFF111827),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    DropdownMenuItem(
-                      value: 'party',
-
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 14,
-                            backgroundColor: Color(0xFFF3F4F6),
-
-                            child: Icon(
-                              Icons.cake_rounded,
-                              color: Color(0xFF374151),
-                              size: 18,
-                            ),
-                          ),
-
-                          SizedBox(width: 12),
-
-                          Text(
-                            'Hora de Fiesta',
-
-                            style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                              color: Color(0xFF111827),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
 
-                  onChanged: (value) {
-                    if (value == null) return;
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'golden',
 
-                    empresaProvider.cambiarEmpresa(value);
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 14,
+                                      backgroundColor: Color(0xFFF3F4F6),
 
-                    context.read<EventosProvider>().cargarEventos(value);
-                  },
-                ),
-              ),
-            ),
+                                      child: Icon(
+                                        Icons.celebration_rounded,
+                                        color: Color(0xFF374151),
+                                        size: 18,
+                                      ),
+                                    ),
 
-            const SizedBox(height: 16),
+                                    SizedBox(width: 12),
 
-            /// FORMULARIO
-            if (mostrarFormulario) ...[
-              Container(
-                padding: const EdgeInsets.all(16),
+                                    Text(
+                                      'Golden Garden',
 
-                decoration: BoxDecoration(
-                  color: Colors.white,
-
-                  borderRadius: BorderRadius.circular(20),
-
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-
-                child: Column(
-                  children: [
-                    /// TITULO
-                    TextField(
-                      controller: tituloController,
-
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-
-                      decoration: InputDecoration(
-                        labelText: 'Título',
-
-                        labelStyle: TextStyle(color: Colors.grey.shade700),
-
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    /// DESCRIPCION
-                    TextField(
-                      controller: descripcionController,
-
-                      maxLines: 3,
-
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-
-                      decoration: InputDecoration(
-                        labelText: 'Descripción',
-
-                        labelStyle: TextStyle(color: Colors.grey.shade700),
-
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    /// FECHA
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: accentColor,
-
-                          foregroundColor: Colors.white,
-
-                          elevation: 0,
-
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-
-                        onPressed: seleccionarFecha,
-
-                        icon: const Icon(Icons.calendar_month),
-
-                        label: Text(
-                          fechaSeleccionada == null
-                              ? 'Seleccionar Fecha'
-                              : fechaSeleccionada.toString().split(' ')[0],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    /// BOTONES
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 52,
-
-                            child: ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
-
-                                foregroundColor: Colors.white,
-
-                                elevation: 0,
-
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                        color: Color(0xFF111827),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
 
-                              onPressed: guardarEvento,
+                              DropdownMenuItem(
+                                value: 'party',
 
-                              icon: const Icon(Icons.save),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 14,
+                                      backgroundColor: Color(0xFFF3F4F6),
 
-                              label: const Text('Guardar'),
-                            ),
+                                      child: Icon(
+                                        Icons.cake_rounded,
+                                        color: Color(0xFF374151),
+                                        size: 18,
+                                      ),
+                                    ),
+
+                                    SizedBox(width: 12),
+
+                                    Text(
+                                      'Hora de Fiesta',
+
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                        color: Color(0xFF111827),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+
+                            onChanged: (value) {
+                              if (value == null) return;
+
+                              empresaProvider.cambiarEmpresa(value);
+
+                              context.read<EventosProvider>().cargarEventos(
+                                value,
+                              );
+                            },
                           ),
                         ),
+                      ),
 
-                        const SizedBox(width: 10),
+                      const SizedBox(height: 16),
 
-                        Expanded(
-                          child: SizedBox(
-                            height: 52,
+                      /// FORMULARIO
+                      if (mostrarFormulario) ...[
+                        Container(
+                          padding: const EdgeInsets.all(16),
 
-                            child: ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey.shade200,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
 
-                                foregroundColor: Colors.black87,
+                            borderRadius: BorderRadius.circular(20),
 
-                                elevation: 0,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
 
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
+                          child: Column(
+                            children: [
+                              /// TITULO
+                              TextField(
+                                controller: tituloController,
+
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ),
+
+                                decoration: InputDecoration(
+                                  labelText: 'Título',
+
+                                  labelStyle: TextStyle(
+                                    color: Colors.grey.shade700,
+                                  ),
+
+                                  filled: true,
+                                  fillColor: Colors.grey.shade100,
+
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    borderSide: BorderSide.none,
+                                  ),
                                 ),
                               ),
 
-                              onPressed: () {
-                                setState(() {
-                                  mostrarFormulario = false;
-                                });
-                              },
+                              const SizedBox(height: 12),
 
-                              icon: const Icon(Icons.close),
+                              /// DESCRIPCION
+                              TextField(
+                                controller: descripcionController,
 
-                              label: const Text('Cancelar'),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+                                maxLines: 3,
 
-              const SizedBox(height: 16),
-            ],
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ),
 
-            /// BOTONES LISTA / CALENDARIO
-            Container(
-              padding: const EdgeInsets.all(4),
+                                decoration: InputDecoration(
+                                  labelText: 'Descripción',
 
-              decoration: BoxDecoration(
-                color: Colors.white,
-
-                borderRadius: BorderRadius.circular(16),
-              ),
-
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: !mostrarCalendario
-                            ? primaryColor
-                            : Colors.transparent,
-
-                        foregroundColor: !mostrarCalendario
-                            ? Colors.white
-                            : Colors.black87,
-
-                        elevation: 0,
-
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-
-                      onPressed: () {
-                        setState(() {
-                          mostrarCalendario = false;
-                        });
-                      },
-
-                      icon: const Icon(Icons.list),
-
-                      label: const Text('Lista'),
-                    ),
-                  ),
-
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: mostrarCalendario
-                            ? primaryColor
-                            : Colors.transparent,
-
-                        foregroundColor: mostrarCalendario
-                            ? Colors.white
-                            : Colors.black87,
-
-                        elevation: 0,
-
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-
-                      onPressed: () {
-                        setState(() {
-                          mostrarCalendario = true;
-                        });
-                      },
-
-                      icon: const Icon(Icons.calendar_month),
-
-                      label: const Text('Calendario'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            /// CONTENIDO
-            Expanded(
-              child: eventosProvider.isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-                      ),
-                    )
-                  : mostrarCalendario
-                  ? CalendarioWidget(eventos: eventosProvider.eventos)
-                  : Builder(
-                      builder: (context) {
-                        final eventos = [...eventosProvider.eventos];
-
-                        eventos.sort((a, b) {
-                          return DateTime.parse(
-                            a.fecha,
-                          ).compareTo(DateTime.parse(b.fecha));
-                        });
-
-                        Map<String, List<EventoModel>> grupos = {};
-
-                        final meses = [
-                          '',
-                          'ENERO',
-                          'FEBRERO',
-                          'MARZO',
-                          'ABRIL',
-                          'MAYO',
-                          'JUNIO',
-                          'JULIO',
-                          'AGOSTO',
-                          'SEPTIEMBRE',
-                          'OCTUBRE',
-                          'NOVIEMBRE',
-                          'DICIEMBRE',
-                        ];
-
-                        for (var evento in eventos) {
-                          final fecha = DateTime.parse(evento.fecha);
-
-                          final key = '${meses[fecha.month]} - ${fecha.year}';
-
-                          if (!grupos.containsKey(key)) {
-                            grupos[key] = [];
-                          }
-
-                          grupos[key]!.add(evento);
-                        }
-
-                        final keys = grupos.keys.toList();
-
-                        return ListView.builder(
-                          itemCount: keys.length,
-
-                          itemBuilder: (context, index) {
-                            final key = keys[index];
-
-                            final eventosGrupo = grupos[key]!;
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-
-                              children: [
-                                Container(
-                                  width: double.infinity,
-
-                                  margin: const EdgeInsets.only(
-                                    bottom: 10,
-                                    top: 8,
+                                  labelStyle: TextStyle(
+                                    color: Colors.grey.shade700,
                                   ),
 
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
+                                  filled: true,
+                                  fillColor: Colors.grey.shade100,
+
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    borderSide: BorderSide.none,
                                   ),
+                                ),
+                              ),
 
-                                  decoration: BoxDecoration(
-                                    color: primaryColor,
+                              const SizedBox(height: 12),
 
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
+                              /// FECHA
+                              SizedBox(
+                                width: double.infinity,
+                                height: 52,
 
-                                  child: Text(
-                                    key,
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: accentColor,
 
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    foregroundColor: Colors.white,
 
-                                      fontSize: 18,
+                                    elevation: 0,
 
-                                      fontWeight: FontWeight.bold,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
                                     ),
                                   ),
+
+                                  onPressed: seleccionarFecha,
+
+                                  icon: const Icon(Icons.calendar_month),
+
+                                  label: Text(
+                                    fechaSeleccionada == null
+                                        ? 'Seleccionar Fecha'
+                                        : fechaSeleccionada.toString().split(
+                                            ' ',
+                                          )[0],
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              /// BOTONES
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: [
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width < 400
+                                        ? double.infinity
+                                        : (MediaQuery.of(context).size.width /
+                                                  2) -
+                                              30,
+
+                                    height: 52,
+
+                                    child: ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: primaryColor,
+
+                                        foregroundColor: Colors.white,
+
+                                        elevation: 0,
+
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
+                                        ),
+                                      ),
+
+                                      onPressed: guardarEvento,
+
+                                      icon: const Icon(Icons.save),
+
+                                      label: const Text('Guardar'),
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width < 400
+                                        ? double.infinity
+                                        : (MediaQuery.of(context).size.width /
+                                                  2) -
+                                              30,
+
+                                    height: 52,
+
+                                    child: ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.grey.shade200,
+
+                                        foregroundColor: Colors.black87,
+
+                                        elevation: 0,
+
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
+                                        ),
+                                      ),
+
+                                      onPressed: () {
+                                        setState(() {
+                                          mostrarFormulario = false;
+                                        });
+                                      },
+
+                                      icon: const Icon(Icons.close),
+
+                                      label: const Text('Cancelar'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+                      ],
+
+                      /// BOTONES LISTA / CALENDARIO
+                      Container(
+                        padding: const EdgeInsets.all(4),
+
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: !mostrarCalendario
+                                      ? primaryColor
+                                      : Colors.transparent,
+
+                                  foregroundColor: !mostrarCalendario
+                                      ? Colors.white
+                                      : Colors.black87,
+
+                                  elevation: 0,
+
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
 
-                                ...eventosGrupo.map((evento) {
-                                  return EventoCard(evento: evento);
-                                }),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
-            ),
-          ],
+                                onPressed: () {
+                                  setState(() {
+                                    mostrarCalendario = false;
+                                  });
+                                },
+
+                                icon: const Icon(Icons.list),
+
+                                label: const Text('Lista'),
+                              ),
+                            ),
+
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: mostrarCalendario
+                                      ? primaryColor
+                                      : Colors.transparent,
+
+                                  foregroundColor: mostrarCalendario
+                                      ? Colors.white
+                                      : Colors.black87,
+
+                                  elevation: 0,
+
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+
+                                onPressed: () {
+                                  setState(() {
+                                    mostrarCalendario = true;
+                                  });
+                                },
+
+                                icon: const Icon(Icons.calendar_month),
+
+                                label: const Text('Calendario'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      /// CONTENIDO
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.55,
+
+                        child: eventosProvider.isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    primaryColor,
+                                  ),
+                                ),
+                              )
+                            : mostrarCalendario
+                            ? CalendarioWidget(eventos: eventosProvider.eventos)
+                            : Builder(
+                                builder: (context) {
+                                  final eventos = [...eventosProvider.eventos];
+
+                                  eventos.sort((a, b) {
+                                    return DateTime.parse(
+                                      a.fecha,
+                                    ).compareTo(DateTime.parse(b.fecha));
+                                  });
+
+                                  Map<String, List<EventoModel>> grupos = {};
+
+                                  final meses = [
+                                    '',
+                                    'ENERO',
+                                    'FEBRERO',
+                                    'MARZO',
+                                    'ABRIL',
+                                    'MAYO',
+                                    'JUNIO',
+                                    'JULIO',
+                                    'AGOSTO',
+                                    'SEPTIEMBRE',
+                                    'OCTUBRE',
+                                    'NOVIEMBRE',
+                                    'DICIEMBRE',
+                                  ];
+
+                                  for (var evento in eventos) {
+                                    final fecha = DateTime.parse(evento.fecha);
+
+                                    final key =
+                                        '${meses[fecha.month]} - ${fecha.year}';
+
+                                    if (!grupos.containsKey(key)) {
+                                      grupos[key] = [];
+                                    }
+
+                                    grupos[key]!.add(evento);
+                                  }
+
+                                  final keys = grupos.keys.toList();
+
+                                  return ListView.builder(
+                                    itemCount: keys.length,
+
+                                    itemBuilder: (context, index) {
+                                      final key = keys[index];
+
+                                      final eventosGrupo = grupos[key]!;
+
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+
+                                        children: [
+                                          Container(
+                                            width: double.infinity,
+
+                                            margin: const EdgeInsets.only(
+                                              bottom: 10,
+                                              top: 8,
+                                            ),
+
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 12,
+                                            ),
+
+                                            decoration: BoxDecoration(
+                                              color: primaryColor,
+
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+
+                                            child: Text(
+                                              key,
+
+                                              style: const TextStyle(
+                                                color: Colors.white,
+
+                                                fontSize: 18,
+
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+
+                                          ...eventosGrupo.map((evento) {
+                                            return EventoCard(evento: evento);
+                                          }),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
